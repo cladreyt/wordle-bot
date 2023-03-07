@@ -1,4 +1,5 @@
-
+// every string in words.txt sorted according to jaccard_similarity. This operation takes more time
+// so it was recorded here
 -- Wordle Bot --
 which
 there
