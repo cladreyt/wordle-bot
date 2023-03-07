@@ -1,2 +1,3 @@
 # wordle_bot
-Small project for solving wordle quickly
+Project for solving wordle quickly
+Uses jaccard similarity to sort strings by similarity to have optimal guesses.
