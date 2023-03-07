@@ -59,12 +59,15 @@ bool isPossible(string word, vector<vector<pair<char, char>>> &savedOutput){
                 //edgecase for words with same letter and guess has one green and one yellow
                 //yellow letter must be in different index from the green letter (that is the same letter)
             }else{//gray (x)
-                //if word contains this and this guess doesn't have this letter in green, throw it out
+                //if word contains this and this guess doesn't have this letter in green or yellow, throw it out
                 if(word.find(savedOutput[guessNum][charIndex].first) != -1){
                     bool hasInGreen = false;
                     for(int i = 0; i < 5; i++){
                         if(savedOutput[guessNum][i].first == savedOutput[guessNum][charIndex].first && 
                         savedOutput[guessNum][i].second == 'g'){ hasInGreen = true; }
+                        //if guess has this letter in yellow and the gray spot is not in the same index, keep in
+                        if(savedOutput[guessNum][i].first == savedOutput[guessNum][charIndex].first && 
+                        savedOutput[guessNum][i].second == 'y' && word[charIndex] != savedOutput[guessNum][charIndex].first){ hasInGreen = true; }
                     }
                     if(!hasInGreen){ return false; }
                 }   
