@@ -72,7 +72,7 @@ bool cmp(string s1, string s2, const vector<string>& vec) {
     return count1 > count2;
 }
 
-void sortVector(vector<string>& vec) {
+void sort_strings_by_common_letters(vector<string>& vec) {
     sort(vec.begin(), vec.end(), [&vec](string s1, string s2){ return cmp(s1, s2, vec); });
 }
 //end new code
@@ -169,7 +169,7 @@ int main() {
         getPossWords(savedOutput, answers);
 
         //sort_strings_by_similarity(answers);
-        sortVector(answers);
+        sort_strings_by_common_letters(answers);
         for(string word : answers){ cout << word << "\n"; }
     }
 }
