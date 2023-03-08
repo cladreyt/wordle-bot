@@ -46,6 +46,37 @@ vector<string> sort_strings_by_similarity(vector<string>& strings) {
     }
     return sorted_strings;
 }
+//start new code
+int countCommonLetters(string s1, string s2) {
+    int count = 0;
+    for (int i = 0; i < s1.length(); i++) {
+        for (int j = 0; j < s2.length(); j++) {
+            if (s1[i] == s2[j]) {
+                count++;
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+bool cmp(string s1, string s2, const vector<string>& vec) {
+    int count1 = 0, count2 = 0;
+    for (int i = 0; i < vec.size(); i++) {
+        if (countCommonLetters(s1, vec[i]) > countCommonLetters(s2, vec[i])) {
+            count1++;
+        } else if (countCommonLetters(s1, vec[i]) < countCommonLetters(s2, vec[i])) {
+            count2++;
+        }
+    }
+    return count1 > count2;
+}
+
+void sortVector(vector<string>& vec) {
+    sort(vec.begin(), vec.end(), [&vec](string s1, string s2){ return cmp(s1, s2, vec); });
+}
+//end new code
+
 // to run use g++ -std=c++11 solver.cpp -o solver
 // ./solver
 bool isPossible(string word, vector<vector<pair<char, char>>> &savedOutput){
@@ -56,21 +87,36 @@ bool isPossible(string word, vector<vector<pair<char, char>>> &savedOutput){
             }else if(savedOutput[guessNum][charIndex].second == 'y'){//yellow (y)
                 int findChar = word.find(savedOutput[guessNum][charIndex].first);
                 if(findChar == -1 || findChar == charIndex){ return false; }
+
+                bool inWord = false;
+                for(int i = 0; i < 5; i++){
+                    if(word[i] == savedOutput[guessNum][charIndex].first){
+                        if(i == charIndex){ return false; }
+                        if(!(savedOutput[guessNum][i].first == word[i] && savedOutput[guessNum][i].second == 'g')){ 
+                            inWord = true;
+                        }
+                    }
+                }
                 //edgecase for words with same letter and guess has one green and one yellow
                 //yellow letter must be in different index from the green letter (that is the same letter)
-            }else{//gray (x)
+            }else if(word.find(savedOutput[guessNum][charIndex].first) != -1){//letter savedOutput[guessNum][charIndex].second is gray (letter charIndex is gray in guess #guessNum)
                 //if word contains this and this guess doesn't have this letter in green or yellow, throw it out
-                if(word.find(savedOutput[guessNum][charIndex].first) != -1){
-                    bool hasInGreen = false;
-                    for(int i = 0; i < 5; i++){
-                        if(savedOutput[guessNum][i].first == savedOutput[guessNum][charIndex].first && 
-                        savedOutput[guessNum][i].second == 'g'){ hasInGreen = true; }
-                        //if guess has this letter in yellow and the gray spot is not in the same index, keep in
-                        if(savedOutput[guessNum][i].first == savedOutput[guessNum][charIndex].first && 
-                        savedOutput[guessNum][i].second == 'y' && word[charIndex] != savedOutput[guessNum][charIndex].first){ hasInGreen = true; }
+                
+                //the word has the grayed out letter in it, must make sure it's in an index where it's green
+                for(int i = 0; i < 5; i++){
+                    if(word[i] == savedOutput[guessNum][charIndex].first){//word[i] is the one grayed out in guess charIndex
+                        if(i == charIndex){ return false; }
+                        if(savedOutput[guessNum][i].second != 'g'){
+                            bool foundYellow = false;
+                            for(int j = 0; j < 5; j++){
+                                if(savedOutput[guessNum][j].first == word[i] && savedOutput[guessNum][j].second == 'y'){
+                                    foundYellow = true;
+                                }
+                            }
+                            if(!foundYellow){ return false; }
+                        }
                     }
-                    if(!hasInGreen){ return false; }
-                }   
+                }
             }
         }
     }
@@ -122,7 +168,8 @@ int main() {
 
         getPossWords(savedOutput, answers);
 
-        sort_strings_by_similarity(answers);
+        //sort_strings_by_similarity(answers);
+        sortVector(answers);
         for(string word : answers){ cout << word << "\n"; }
     }
 }
